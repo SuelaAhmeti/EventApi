@@ -76,6 +76,14 @@ Shembull i rezultateve:
 - Ndryshimet reflektohen menjëherë
 
 ---
+## 📸 Screenshot
+
+![App Screenshot](screenashot2.png)
+![App Screenshot](screenshot3.png)
+![App Screenshot](screenshot4.png)
+![App Screenshot](screenshot5.png)
+![App Screenshot](screenshot6.png)
+---
 
 ## 💡 Notes
 
