@@ -12,39 +12,83 @@ namespace EventApi.Data
 
         public List<Event> GetAll()
         {
-            if (!File.Exists(filePath))
-                return new List<Event>();
-
-            var lines = File.ReadAllLines(filePath);
-
-            return lines.Select(line =>
+            try
             {
-                var parts = line.Split(',');
-                return new Event
+                if (!File.Exists(filePath))
                 {
-                    Id = int.Parse(parts[0]),
-                    Title = parts[1],
-                    Date = DateTime.Parse(parts[2]),
-                    Price = double.Parse(parts[3]),
-                    CategoryId = int.Parse(parts[4]),
-                    OrganizerId = int.Parse(parts[5])
-                };
-            }).ToList();
+                    Console.WriteLine("File nuk u gjet, po krijoj file të ri...");
+                    File.WriteAllText(filePath, string.Empty);
+                    return new List<Event>();
+                }
+
+                var lines = File.ReadAllLines(filePath);
+                var result = new List<Event>();
+
+                foreach (var line in lines)
+                {
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    var parts = line.Split(',');
+                    if (parts.Length < 6)
+                        continue;
+
+                    if (!int.TryParse(parts[0], out var id))
+                        continue;
+
+                    var title = parts[1];
+                    if (string.IsNullOrWhiteSpace(title))
+                        continue;
+
+                    if (!DateTime.TryParse(parts[2], out var date))
+                        continue;
+
+                    if (!double.TryParse(parts[3], out var price))
+                        continue;
+
+                    if (!int.TryParse(parts[4], out var categoryId))
+                        continue;
+
+                    if (!int.TryParse(parts[5], out var organizerId))
+                        continue;
+
+                    result.Add(new Event
+                    {
+                        Id = id,
+                        Title = title,
+                        Date = date,
+                        Price = price,
+                        CategoryId = categoryId,
+                        OrganizerId = organizerId
+                    });
+                }
+
+                return result;
+            }
+            catch
+            {
+                Console.WriteLine("Gabim gjatë leximit të file-it.");
+                return new List<Event>();
+            }
         }
 
-        public Event GetById(int id)
+        public Event? GetById(int id)
         {
-#pragma warning disable CS8603 // Possible null reference return.
             return GetAll().FirstOrDefault(e => e.Id == id);
-#pragma warning restore CS8603 // Possible null reference return.
         }
 
         public void Add(Event entity)
         {
-            var events = GetAll();
-            events.Add(entity);
-
-            SaveAll(events);
+            try
+            {
+                var events = GetAll();
+                events.Add(entity);
+                SaveAll(events);
+            }
+            catch
+            {
+                Console.WriteLine("Gabim gjatë ruajtjes së eventit.");
+            }
         }
 
         public void Save()
@@ -54,28 +98,49 @@ namespace EventApi.Data
 
         private void SaveAll(List<Event> events)
         {
-            var lines = events.Select(e =>
-                $"{e.Id},{e.Title},{e.Date},{e.Price},{e.CategoryId},{e.OrganizerId}");
+            try
+            {
+                var lines = events.Select(e =>
+                    $"{e.Id},{e.Title},{e.Date:o},{e.Price},{e.CategoryId},{e.OrganizerId}");
 
-            File.WriteAllLines(filePath, lines);
+                File.WriteAllLines(filePath, lines);
+            }
+            catch
+            {
+                Console.WriteLine("Gabim gjatë shkrimit në file.");
+            }
         }
         public void Delete(int id)
          { 
-             var events = GetAll();
-             events = events.Where(e => e.Id != id).ToList();
-             SaveAll(events);
+             try
+             {
+                 var events = GetAll();
+                 events = events.Where(e => e.Id != id).ToList();
+                 SaveAll(events);
+             }
+             catch
+             {
+                 Console.WriteLine("Gabim gjatë fshirjes në file.");
+             }
          }
 
         public void Update(Event updated)
          {
-             var events = GetAll();
-             var index = events.FindIndex(e => e.Id == updated.Id);
+             try
+             {
+                 var events = GetAll();
+                 var index = events.FindIndex(e => e.Id == updated.Id);
 
-             if (index != -1)
-               {
-                 events[index] = updated;
-                SaveAll(events);
-               }
+                 if (index != -1)
+                 {
+                     events[index] = updated;
+                     SaveAll(events);
+                 }
+             }
+             catch
+             {
+                 Console.WriteLine("Gabim gjatë update në file.");
+             }
          }
     }
 }

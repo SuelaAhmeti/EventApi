@@ -20,36 +20,105 @@ namespace EventApi.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_eventService.GetByCategory(1));
+            try
+            {
+                return Ok(_eventService.GetAll());
+            }
+            catch
+            {
+                return StatusCode(500, "Gabim gjatë marrjes së eventeve.");
+            }
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var ev = _eventService.GetById(id);
-            if (ev == null) return NotFound();
-            return Ok(ev);
+            try
+            {
+                var ev = _eventService.GetById(id);
+                if (ev == null)
+                    return NotFound("Eventi nuk u gjet");
+                return Ok(ev);
+            }
+            catch
+            {
+                return StatusCode(500, "Gabim gjatë kërkimit.");
+            }
         }
 
         [HttpPost]
         public IActionResult Create(Event ev)
         {
-            _eventService.CreateEvent(ev);
-            return Ok();
+            try
+            {
+                var (success, message) = _eventService.CreateEvent(ev);
+                return success ? Ok(message) : BadRequest(message);
+            }
+            catch
+            {
+                return StatusCode(500, "Gabim gjatë krijimit.");
+            }
         }
 
         [HttpPut]
         public IActionResult Update(Event ev)
         {
-            _eventService.UpdateEvent(ev);
-            return Ok();
+            try
+            {
+                var (success, message) = _eventService.UpdateEvent(ev);
+                if (!success && message == "Itemi nuk u gjet")
+                    return NotFound(message);
+                return success ? Ok(message) : BadRequest(message);
+            }
+            catch
+            {
+                return StatusCode(500, "Gabim gjatë përditësimit.");
+            }
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            _eventService.DeleteEvent(id);
-            return Ok();
+            try
+            {
+                var (success, message) = _eventService.DeleteEvent(id);
+                if (!success && message == "Itemi nuk u gjet")
+                    return NotFound(message);
+                return success ? Ok(message) : BadRequest(message);
+            }
+            catch
+            {
+                return StatusCode(500, "Gabim gjatë fshirjes.");
+            }
+        }
+
+        // 📊 STATS (FEATURE E RE)
+        [HttpGet("stats")]
+        public IActionResult Stats()
+        {
+            try
+            {
+                return Ok(_eventService.GetPriceStats());
+            }
+            catch
+            {
+                return StatusCode(500, "Gabim gjatë kalkulimit të statistikave.");
+            }
+        }
+
+        // ↕️ SORT (FEATURE E RE)
+        // Example: /api/event/sort?by=price&dir=asc
+        [HttpGet("sort")]
+        public IActionResult Sort(string? by, string? dir)
+        {
+            try
+            {
+                return Ok(_eventService.Sort(by, dir));
+            }
+            catch
+            {
+                return StatusCode(500, "Gabim gjatë sortimit.");
+            }
         }
     }
 }
