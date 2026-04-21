@@ -110,38 +110,39 @@ namespace EventApi.Data
                 Console.WriteLine("Gabim gjatë shkrimit në file.");
             }
         }
+
         public void Delete(int id)
-         { 
-             try
-             {
-                 var events = GetAll();
-                 events = events.Where(e => e.Id != id).ToList();
-                 SaveAll(events);
-             }
-             catch
-             {
-                 Console.WriteLine("Gabim gjatë fshirjes në file.");
-             }
-         }
+        {
+            try
+            {
+                var events = GetAll();
+                events = events.Where(e => e.Id != id).ToList();
+                SaveAll(events);
+            }
+            catch
+            {
+                Console.WriteLine("Gabim gjatë fshirjes në file.");
+            }
+        }
 
         public void Update(Event updated)
-         {
-             try
-             {
-                 var events = GetAll();
-                 var index = events.FindIndex(e => e.Id == updated.Id);
+        {
+            try
+            {
+                var events = GetAll();
+                var index = events.FindIndex(e => e.Id == updated.Id);
 
-                 if (index != -1)
-                 {
-                     events[index] = updated;
-                     SaveAll(events);
-                 }
-             }
-             catch
-             {
-                 Console.WriteLine("Gabim gjatë update në file.");
-             }
-         }
+                if (index != -1)
+                {
+                    events[index] = updated;
+                    SaveAll(events);
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Gabim gjatë update në file.");
+            }
+        }
     }
 }
  

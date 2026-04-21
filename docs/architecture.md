@@ -51,6 +51,18 @@ Client
 - CSV file për ruajtje të thjeshtë dhe demonstrim
 - Swagger për testim të API
 - Layered Architecture për strukturë të pastër
+- **Dependency Injection (DI)**: `FileRepository` dhe `EventService` regjistrohen në `Program.cs`, dhe injektohen në `EventController` përmes konstruktorit (më pak coupling dhe më i lehtë për testim)
+
+---
+
+## 🔌 Dependency Injection (DI)
+
+Në `Program.cs`:
+
+- `IRepository<Event>` → `FileRepository`
+- `EventService` regjistrohet si singleton
+
+Kjo e bën `Controller` të varet nga abstraksioni (`IRepository<Event>`) dhe jo nga `new FileRepository()` brenda klasës.
 
 ---
 

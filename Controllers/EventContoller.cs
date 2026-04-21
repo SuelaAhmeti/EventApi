@@ -11,10 +11,9 @@ namespace EventApi.Controllers
     {
         private readonly EventService _eventService;
 
-        public EventController()
+        public EventController(EventService eventService)
         {
-            IRepository<Event> repo = new FileRepository();
-            _eventService = new EventService(repo);
+            _eventService = eventService;
         }
 
         [HttpGet]

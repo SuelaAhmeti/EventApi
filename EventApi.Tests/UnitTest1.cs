@@ -67,6 +67,37 @@ public class UnitTest1
     }
 
     [Fact]
+    public void UpdateEvent_InvalidId_ReturnsError()
+    {
+        var dir = CreateIsolatedWorkingDir();
+        var oldCwd = Directory.GetCurrentDirectory();
+        Directory.SetCurrentDirectory(dir);
+
+        try
+        {
+            var repo = new FileRepository();
+            var service = new EventService(repo);
+
+            var (success, message) = service.UpdateEvent(new Event
+            {
+                Id = 0,
+                Title = "OK",
+                Date = DateTime.UtcNow,
+                Price = 10,
+                CategoryId = 1,
+                OrganizerId = 1
+            });
+
+            Assert.False(success);
+            Assert.Equal("ID nuk është valid", message);
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(oldCwd);
+        }
+    }
+
+    [Fact]
     public void GetPriceStats_EmptyList_ReturnsZeroCount()
     {
         var dir = CreateIsolatedWorkingDir();

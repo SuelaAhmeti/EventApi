@@ -69,15 +69,11 @@ namespace EventApi.Services
         {
             try
             {
-                var fileRepo = _repo as FileRepository;
-                if (fileRepo == null)
-                    return (false, "Repository nuk suporton këtë operacion.");
-
                 var existing = _repo.GetById(id);
                 if (existing == null)
                     return (false, "Itemi nuk u gjet");
 
-                fileRepo.Delete(id);
+                _repo.Delete(id);
                 return (true, "Eventi u fshi");
             }
             catch
@@ -93,15 +89,26 @@ namespace EventApi.Services
                 if (ev == null)
                     return (false, "Eventi nuk mund të jetë null");
 
-                var fileRepo = _repo as FileRepository;
-                if (fileRepo == null)
-                    return (false, "Repository nuk suporton këtë operacion.");
+                if (ev.Id <= 0)
+                    return (false, "ID nuk është valid");
+
+                if (string.IsNullOrWhiteSpace(ev.Title))
+                    return (false, "Titulli nuk mund të jetë bosh");
+
+                if (ev.Price <= 0)
+                    return (false, "Çmimi duhet të jetë më i madh se 0");
+
+                if (ev.CategoryId <= 0)
+                    return (false, "CategoryId nuk është valid");
+
+                if (ev.OrganizerId <= 0)
+                    return (false, "OrganizerId nuk është valid");
 
                 var existing = _repo.GetById(ev.Id);
                 if (existing == null)
                     return (false, "Itemi nuk u gjet");
 
-                fileRepo.Update(ev);
+                _repo.Update(ev);
                 return (true, "Eventi u përditësua");
             }
             catch
