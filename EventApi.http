@@ -1,6 +1,47 @@
 @EventApi_HostAddress = http://localhost:5039
 
-GET {{EventApi_HostAddress}}/weatherforecast/
+GET {{EventApi_HostAddress}}/api/event
 Accept: application/json
 
 ###
+
+GET {{EventApi_HostAddress}}/api/event/1
+Accept: application/json
+
+###
+
+GET {{EventApi_HostAddress}}/api/event/sort?by=price&dir=asc
+Accept: application/json
+
+###
+
+GET {{EventApi_HostAddress}}/api/event/stats
+Accept: application/json
+
+###
+
+POST {{EventApi_HostAddress}}/api/event
+Content-Type: application/json
+
+{
+  "id": 10,
+  "title": "Demo Event",
+  "date": "2026-06-15T00:00:00",
+  "price": 35,
+  "categoryId": 1,
+  "organizerId": 1
+}
+
+###
+
+POST {{EventApi_HostAddress}}/api/event
+Content-Type: application/json
+
+{
+  "id": 11,
+  "title": "Invalid Demo Event",
+  "date": "2026-06-15T00:00:00",
+  "price": 0,
+  "categoryId": 1,
+  "organizerId": 1
+}
